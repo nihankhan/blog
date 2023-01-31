@@ -7,7 +7,6 @@ import (
 )
 
 //User is a model for user
-
 type User struct {
 	ID       int
 	Name     string
@@ -16,7 +15,6 @@ type User struct {
 }
 
 // Article is a model for articles.
-
 type Article struct {
 	ID        int
 	Image     string
@@ -36,7 +34,6 @@ var (
 )
 
 // FindArticle is to print a article
-
 func FindArticle(slug string) *Article {
 	rows, err := db.Query(`SELECT articles.image, articles.title, articles.content, users.name, articles.created_at FROM articles JOIN users ON users.id = articles.author WHERE slug = ?`, slug)
 	if err != nil {
@@ -98,8 +95,8 @@ func Articles() []*Article {
 			log.Fatal(err)
 		}
 
-		user := User {
-			Name : author,
+		user := User{
+			Name: author,
 		}
 		articles = append(articles, &Article{id, image, slug, title, content, user, parsedCreatedAt})
 	}
@@ -134,7 +131,7 @@ func (user User) FindArticle(id int) *Article {
 	var createdAt []byte
 
 	article := &Article{
-		ID : id,
+		ID:     id,
 		Author: user,
 	}
 
@@ -155,4 +152,87 @@ func (user User) FindArticle(id int) *Article {
 	return article
 }
 
+func (user User) FindArticles() []*Article {
+	var articles []*Article
 
+	rows, err := db.Query(`SELECT id, image, slug, title, content, created_at FROM articles WHERE author = ?`, user.ID)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var (
+			id        int
+			image     string
+			slug      string
+			title     string
+			content   string
+			createdAt []byte
+		)
+		err = rows.Scan(&id, &image, &slug, &title, &content, &createdAt)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		parsedCreatedAt, err := time.Parse("2023-01-30 08:44:07", string(createdAt))
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		articles = append(articles, &Article{id, image, slug, title, content, user, parsedCreatedAt})
+	}
+
+	return articles
+}
+
+// Create create a user
+
+func (user User) Create() *User {
+	result, err := db.Exec("INSERT INTO users(name, email, password) VALUES (?, ?, ?)", user.Name, user.Email, user.Password)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	id, err := result.LastInsertId()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	if id != 0 {
+		user.ID = int(id)
+	}
+
+	return &user
+}
+
+func (user User) CreateArticle(article *Article) {
+	_, err := db.Exec(
+		"INSERT INTO articles (image, slug, title, content, author, created_at) VALUES(?, ?, ?, ?, ?, ?)",
+		article.Image,
+		article.Slug,
+		article.Title,
+		article.Content,
+		article.Author,
+		article.CreatedAt,
+	)
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
+func (user User) UpdateArticle(article *Article) {
+	_, err := db.Exec(
+		"UPDATE articles SET image = ?, slug = ?, title = ?, content = ? WHERE id = ? AND author = ?",
+		article.Image,
+		article.Slug,
+		article.Title,
+		article.Content,
+		article.ID,
+		user.ID,
+	)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+}
