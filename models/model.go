@@ -236,3 +236,10 @@ func (user User) UpdateArticle(article *Article) {
 		log.Fatal(err)
 	}
 }
+
+func (user User) DeleteArticle(article *Article) {
+	_, err := db.Exec("DELETE FROM articles WHERE id = ? AND author = ?", article.ID, user.ID)
+	if err != nil {
+		log.Fatal(err)
+	}
+}
