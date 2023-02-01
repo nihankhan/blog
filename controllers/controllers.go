@@ -270,21 +270,21 @@ func Dashboard(w http.ResponseWriter, r *http.Request) {
 			if user != nil {
 				if id == 0 {
 					article := &models.Article{
-						Image: r.FormValue("image"),
-						Slug:  slug.Make(r.FormValue("title")),
-						Title: r.FormValue("title"),
-						Content: r.FormValue("content"),
-						Author: *user,
+						Image:     r.FormValue("image"),
+						Slug:      slug.Make(r.FormValue("title")),
+						Title:     r.FormValue("title"),
+						Content:   r.FormValue("content"),
+						Author:    *user,
 						CreatedAt: time.Now(),
 					}
 
 					user.CreateArticle(article)
 				} else {
 					article := &models.Article{
-						ID: id,
-						Image: r.FormValue("image"),
-						Slug: slug.Make(r.FormValue("title")),
-						Title: r.FormValue("title"),
+						ID:      id,
+						Image:   r.FormValue("image"),
+						Slug:    slug.Make(r.FormValue("title")),
+						Title:   r.FormValue("title"),
 						Content: r.FormValue("content"),
 					}
 
