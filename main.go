@@ -7,16 +7,19 @@ import (
 	"os"
 
 	"github.com/joho/godotenv"
+	"github.com/nihankhan/blog/config"
+	con "github.com/nihankhan/blog/controllers"
+	"github.com/nihankhan/blog/models"
 )
 
 func main() {
 	mux := http.NewServeMux()
 
-	mux.HandleFunc("/", route.Index)
-	mux.HandleFunc("/login", route.Login)
-	mux.HandleFunc("/logout", route.Logout)
-	mux.HandleFunc("signup", route.Signup)
-	mux.HandleFunc("/dashboard", route.Dashboard)
+	mux.HandleFunc("/", con.Index)
+	mux.HandleFunc("/login", con.Login)
+	mux.HandleFunc("/logout", con.Logout)
+	mux.HandleFunc("signup", con.Signup)
+	mux.HandleFunc("/dashboard", con.Dashboard)
 
 	mux.Handle("/assets/", http.StripPrefix("/assets/", http.FileServer(http.Dir("./assets"))))
 
@@ -33,4 +36,5 @@ func init() {
 		log.Fatal(err)
 	}
 
+	config.Connect()
 }
