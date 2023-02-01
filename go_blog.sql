@@ -1,9 +1,9 @@
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
 
---Database Name: blog
+-- Database Name: blog
 
-CREATE DATABASE IF NOT EXISTS blog
+CREATE DATABASE IF NOT EXISTS blog;
 
 -- Table structure for table "articles"
 
@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS blog.articles (
     title VARCHAR(70) NOT NULL,
     content TEXT NOT NULL,
     author int(11) NOT NULL,
-    created_at DATETIME NOT NULL,
+    created_at DATETIME NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Table structure for table: user

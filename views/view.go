@@ -26,9 +26,9 @@ func truncate(s string) string {
 }
 
 var function = template.FuncMap{
-	"date": date,
+	"date":      date,
 	"shortDate": shortDate,
-	"truncate": truncate,
+	"truncate":  truncate,
 }
 
 func init() {
