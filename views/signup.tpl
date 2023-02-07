@@ -1,10 +1,10 @@
 {{template "header-form"}}
 			<div>
 				<h1 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
-					Register
+					Register Here...
 				</h1>
 			</div>
-			<form class="mt-8 space-y-6" action="/register" method="POST">
+			<form class="mt-8 space-y-6" action="/signup" method="POST">
 				<div class="rounded-md shadow-sm -space-y-px">
 					<div>
 						<label for="name" class="sr-only">Name</label>

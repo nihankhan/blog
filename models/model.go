@@ -2,7 +2,7 @@ package models
 
 import (
 	"database/sql"
-	"log"
+	"fmt"
 	"time"
 )
 
@@ -26,21 +26,21 @@ type Article struct {
 }
 
 var (
-	// db is a database connection.
-	db *sql.DB
+	// Db is a database connection.
+	Db *sql.DB
 
 	//err is an error returned.
-	err error
+	Err error
 )
 
 // FindArticle is to print a article
 func FindArticle(slug string) *Article {
-	rows, err := db.Query(`SELECT articles.image, articles.title, articles.content, users.name, articles.created_at FROM articles JOIN users ON users.id = articles.author WHERE slug = ?`, slug)
+	rows, err := Db.Query(`SELECT articles.image, articles.title, articles.content, users.name, articles.created_at FROM articles JOIN users ON users.id = articles.author WHERE slug = ?`, slug)
 	if err != nil {
-		log.Fatal(err)
+		fmt.Println("err in FindArticle", err)
 	}
 
-	defer rows.Close()
+	//
 
 	var createdAt []byte
 
@@ -50,12 +50,12 @@ func FindArticle(slug string) *Article {
 	for rows.Next() {
 		err = rows.Scan(&article.Image, &article.Title, &article.Content, &user.Name, &createdAt)
 		if err != nil {
-			log.Fatal(err)
+			fmt.Println("err in FindArticle", err)
 		}
 
-		parsedCreatedAt, err := time.Parse("2023-01-30 08:44:07", string(createdAt))
+		parsedCreatedAt, err := time.Parse("2006-01-02 15:04:05", string(createdAt))
 		if err != nil {
-			log.Fatal(err)
+			fmt.Println(err)
 		}
 
 		article.CreatedAt = parsedCreatedAt
@@ -68,11 +68,11 @@ func FindArticle(slug string) *Article {
 func Articles() []*Article {
 	var articles []*Article
 
-	rows, err := db.Query(`SELECT articles.id, articles.image, articles.slug, articles.title, articles.content, users.name, articles.created_at FROM articles JOIN users ON users.id = articles.author`)
+	rows, err := Db.Query(`SELECT articles.id, articles.image, articles.slug, articles.title, articles.content, users.name, articles.created_at FROM articles JOIN users ON users.id = articles.author`)
 	if err != nil {
-		log.Fatal(err)
+		fmt.Println("err in Articles()", err)
 	}
-	defer rows.Close()
+	//
 
 	for rows.Next() {
 		var (
@@ -87,12 +87,12 @@ func Articles() []*Article {
 
 		err = rows.Scan(&id, &image, &slug, &title, &content, &author, &createdAt)
 		if err != nil {
-			log.Fatal(err)
+			fmt.Println("err in rows", err)
 		}
 
-		parsedCreatedAt, err := time.Parse("2023-01-30 08:44:07", string(createdAt))
+		parsedCreatedAt, err := time.Parse("2006-01-02 15:04:05", string(createdAt))
 		if err != nil {
-			log.Fatal(err)
+			fmt.Println("err in rows", err)
 		}
 
 		user := User{
@@ -105,16 +105,16 @@ func Articles() []*Article {
 }
 
 func (user User) Find() *User {
-	rows, err := db.Query(`SELECT * FROM users WHERE email = ?`, user.Email)
+	rows, err := Db.Query(`SELECT * FROM users WHERE email = ?`, user.Email)
 	if err != nil {
-		log.Fatal(err)
+		fmt.Println("err in Find", err)
 	}
-	defer rows.Close()
+	//
 
 	for rows.Next() {
 		err = rows.Scan(&user.ID, &user.Name, &user.Email, &user.Password)
 		if err != nil {
-			log.Fatal(err)
+			fmt.Println("err in Find", err)
 		}
 	}
 
@@ -122,11 +122,11 @@ func (user User) Find() *User {
 }
 
 func (user User) FindArticle(id int) *Article {
-	rows, err := db.Query(`SELECT image, slug, title, content, created_at FROM articles WHERE id = ? AND author = ?`, id, user.ID)
+	rows, err := Db.Query(`SELECT image, slug, title, content, created_at FROM articles WHERE id = ? AND author = ?`, id, user.ID)
 	if err != nil {
-		log.Fatal(err)
+		fmt.Println("err in FArticle", err)
 	}
-	defer rows.Close()
+	//defer rows.Close()
 
 	var createdAt []byte
 
@@ -138,12 +138,12 @@ func (user User) FindArticle(id int) *Article {
 	for rows.Next() {
 		err = rows.Scan(&article.Image, &article.Slug, &article.Title, &article.Content, &createdAt)
 		if err != nil {
-			log.Fatal(err)
+			fmt.Println("err in FArticle", err)
 		}
 
-		parsedCreatedAt, err := time.Parse("2023-01-30 08:44:07", string(createdAt))
+		parsedCreatedAt, err := time.Parse("2006-01-02 15:04:05", string(createdAt))
 		if err != nil {
-			log.Fatal(err)
+			fmt.Println("err in FArticle", err)
 		}
 
 		article.CreatedAt = parsedCreatedAt
@@ -155,11 +155,11 @@ func (user User) FindArticle(id int) *Article {
 func (user User) FindArticles() []*Article {
 	var articles []*Article
 
-	rows, err := db.Query(`SELECT id, image, slug, title, content, created_at FROM articles WHERE author = ?`, user.ID)
+	rows, err := Db.Query(`SELECT id, image, slug, title, content, created_at FROM articles WHERE author = ?`, user.ID)
 	if err != nil {
-		log.Fatal(err)
+		fmt.Println("err in FArticles", err)
 	}
-	defer rows.Close()
+	//
 
 	for rows.Next() {
 		var (
@@ -172,12 +172,12 @@ func (user User) FindArticles() []*Article {
 		)
 		err = rows.Scan(&id, &image, &slug, &title, &content, &createdAt)
 		if err != nil {
-			log.Fatal(err)
+			fmt.Println("err in FArticles", err)
 		}
 
-		parsedCreatedAt, err := time.Parse("2023-01-30 08:44:07", string(createdAt))
+		parsedCreatedAt, err := time.Parse("2006-01-02 15:04:05", string(createdAt))
 		if err != nil {
-			log.Fatal(err)
+			fmt.Println("err in FArticles", err)
 		}
 
 		articles = append(articles, &Article{id, image, slug, title, content, user, parsedCreatedAt})
@@ -189,14 +189,14 @@ func (user User) FindArticles() []*Article {
 // Create create a user
 
 func (user User) Create() *User {
-	result, err := db.Exec("INSERT INTO users(name, email, password) VALUES (?, ?, ?)", user.Name, user.Email, user.Password)
+	result, err := Db.Exec("INSERT INTO users(name, email, password) VALUES(?, ?, ?)", user.Name, user.Email, user.Password)
 	if err != nil {
-		log.Fatal(err)
+		fmt.Println("err in c", err)
 	}
 
 	id, err := result.LastInsertId()
 	if err != nil {
-		log.Fatal(err)
+		fmt.Println("err in c", err)
 	}
 
 	if id != 0 {
@@ -207,22 +207,22 @@ func (user User) Create() *User {
 }
 
 func (user User) CreateArticle(article *Article) {
-	_, err := db.Exec(
-		"INSERT INTO articles (image, slug, title, content, author, created_at) VALUES(?, ?, ?, ?, ?, ?)",
+	_, err := Db.Exec(
+		"INSERT INTO articles(image, slug, title, content, author, created_at) VALUES(?, ?, ?, ?, ?, ?)",
 		article.Image,
 		article.Slug,
 		article.Title,
 		article.Content,
-		article.Author,
+		article.Author.ID,
 		article.CreatedAt,
 	)
 	if err != nil {
-		log.Fatal(err)
+		fmt.Println("err in cArticles", err)
 	}
 }
 
 func (user User) UpdateArticle(article *Article) {
-	_, err := db.Exec(
+	_, err := Db.Exec(
 		"UPDATE articles SET image = ?, slug = ?, title = ?, content = ? WHERE id = ? AND author = ?",
 		article.Image,
 		article.Slug,
@@ -233,13 +233,13 @@ func (user User) UpdateArticle(article *Article) {
 	)
 
 	if err != nil {
-		log.Fatal(err)
+		fmt.Println("err in uArticle", err)
 	}
 }
 
 func (user User) DeleteArticle(article *Article) {
-	_, err := db.Exec("DELETE FROM articles WHERE id = ? AND author = ?", article.ID, user.ID)
+	_, err := Db.Exec("DELETE FROM articles WHERE id = ? AND author = ?", article.ID, user.ID)
 	if err != nil {
-		log.Fatal(err)
+		fmt.Println("err in DArticle", err)
 	}
 }

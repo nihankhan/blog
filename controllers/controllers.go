@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"bytes"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -65,8 +66,10 @@ func Index(w http.ResponseWriter, r *http.Request) {
 
 		var resp bytes.Buffer
 
-		if err := views.Tmpl.ExecuteTemplate(&resp, "signup.tpl", data); err != nil {
+		if err := views.Tmpl.ExecuteTemplate(&resp, "index.tpl", data); err != nil {
 			http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
+
+			fmt.Println("err in Articles()", err)
 
 			return
 		}
@@ -94,10 +97,10 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 	permissson(w, r)
 
 	switch r.Method {
-	case http.MethodGet:
+	case http.MethodGet:	
 		var resp bytes.Buffer
 
-		if err := views.Tmpl.ExecuteTemplate(&resp, "signup.tpl", data); err != nil {
+		if err := views.Tmpl.ExecuteTemplate(&resp, "signup.tpl", nil); err != nil {
 			log.Fatal(err)
 			http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
 

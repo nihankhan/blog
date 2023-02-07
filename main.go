@@ -1,16 +1,17 @@
 package main
 
 import (
+	"database/sql"
 	"fmt"
 	"log"
 	"net/http"
-	"os"
 
-	"github.com/joho/godotenv"
-	"github.com/nihankhan/blog/config"
+	_ "github.com/go-sql-driver/mysql"
 	con "github.com/nihankhan/blog/controllers"
 	"github.com/nihankhan/blog/models"
 )
+
+const PORT = ":8000"
 
 func main() {
 	mux := http.NewServeMux()
@@ -18,23 +19,27 @@ func main() {
 	mux.HandleFunc("/", con.Index)
 	mux.HandleFunc("/login", con.Login)
 	mux.HandleFunc("/logout", con.Logout)
-	mux.HandleFunc("signup", con.Signup)
+	mux.HandleFunc("/signup", con.Signup)
 	mux.HandleFunc("/dashboard", con.Dashboard)
 
 	mux.Handle("/assets/", http.StripPrefix("/assets/", http.FileServer(http.Dir("./assets"))))
 
-	log.Println(fmt.Sprintf("Your app is running on port %s.\n", os.Getenv("PORT")))
-	log.Println(http.ListenAndServe(":"+os.Getenv("PORT"), mux))
+	log.Println(fmt.Sprintf("Your app is Running on PORT %s\n", PORT))
+
+	log.Fatal(http.ListenAndServe(PORT, mux))
 
 }
 
 func init() {
 	con.Sessions = make(map[string]*models.User)
 
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal(err)
+	models.Db, models.Err = sql.Open("mysql", "root:nihan@tcp(127.0.0.1:3306)/blog")
+	if models.Err != nil {
+		log.Fatal(models.Err)
 	}
 
-	config.Connect()
+	models.Err = models.Db.Ping()
+	if models.Err != nil {
+		log.Fatal(models.Err)
+	}
 }

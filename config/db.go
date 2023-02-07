@@ -28,13 +28,13 @@ func Connect() (db *sql.DB) {
 	db, err = sql.Open(dbDriver, dsn(""))
 
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println("err in db", err)
 	}
 
 	err = db.Ping()
 
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println("err in db", err)
 	}
 	return db
 }
