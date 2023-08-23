@@ -189,7 +189,7 @@ func (user User) FindArticles() []*Article {
 // Create create a user
 
 func (user User) Create() *User {
-	result, err := Db.Exec("INSERT INTO users(name, email, password) VALUES(?, ?, ?)", user.Name, user.Email, user.Password)
+	result, err := Db.Exec("INSERT INTO users(id, name, email, password) VALUES(?, ?, ?, ?)", user.ID, user.Name, user.Email, user.Password)
 	if err != nil {
 		fmt.Println("err in c", err)
 	}
