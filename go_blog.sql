@@ -7,6 +7,8 @@ CREATE DATABASE IF NOT EXISTS blog;
 
 -- Table structure for table "articles"
 
+USE blog;
+
 CREATE TABLE IF NOT EXISTS blog.articles (
     id int(11) NOT NULL,
     image VARCHAR(255) DEFAULT NULL,
@@ -20,10 +22,11 @@ CREATE TABLE IF NOT EXISTS blog.articles (
 -- Table structure for table: user
 
 CREATE TABLE IF NOT EXISTS blog.users (
-    id int(11) NOT NULL,
+    id INT AUTO_INCREMENT NOT NULL,
     name VARCHAR(64) NOT NULL,
     email VARCHAR(330) NOT NULL,
-    password VARCHAR(255) NOT NULL
+    password VARCHAR(255) NOT NULL,
+    PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Indexes for table: articles
@@ -36,7 +39,6 @@ ALTER TABLE blog.articles
 -- Indexes for table: users
 
 ALTER TABLE blog.users
-    ADD PRIMARY KEY(`id`),
     ADD UNIQUE KEY(`email`);
 
 -- AUTO_INCREMENT for table: articles    
